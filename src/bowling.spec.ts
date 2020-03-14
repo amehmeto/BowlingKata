@@ -19,7 +19,20 @@ describe('Bowling kata', () => {
         ['4/7/4/-/------------', 51],
         ['4/7/4/-/1--/--------', 63],
         ['X-------------------', 10],
-        ['X-1-----------------', 11],
+        ['X1-----------------', 12],
+        ['X3-----------------', 16],
+        ['X23---------------', 20],
+        ['X23--X-----------', 30],
+        ['XX---------------', 30],
+        ['XX3---------------', 39],
+        ['XXX4-------------', 72],
+        ['XXX4-X----------', 82],
+        ['XXXXXXXXX--', 240],
+        ['XXXXXXXX----', 210],
+        ['XX7/XXXXX----', 187],
+        ['XX-/XXXXXX--', 210],
+        ['XXXXXXXXXXXX', 300],
+        ['XXXXXXXXXXX-', 290],
     ])('should return %i when %s', (rawScore: string, computedScore: number) => {
         expect(new Bowling().computeFinalScore(rawScore)).toBe(computedScore)
     })

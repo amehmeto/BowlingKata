@@ -5,6 +5,8 @@ export class Bowling {
         let score: number = 0
         for (let i = 0 ; scoreLine[i] ; i++)
             score = this.incrementWithRollScore(scoreLine, i, score)
+        //if (score > 300)
+        //    score = 300
         return score
     }
 
@@ -14,7 +16,7 @@ export class Bowling {
         if (scoreLine[i] === '/')
             score = this.computeSpare(scoreLine, i, score)
         if (scoreLine[i] === 'X')
-            score += this.MAX_FRAME_SCORE
+            score = this.computeStrike(scoreLine, i, score)
         return score
     }
 
@@ -24,9 +26,16 @@ export class Bowling {
         return score
     }
 
-    private nextRollScore(scoreLine: string, i: number) {
+    private nextRollScore(scoreLine: string, i: number, score = 0) {
         if (Number.isInteger(+scoreLine[i + 1]))
             return +scoreLine[i + 1]
+        if (scoreLine[i + 1] === '/' ){
+            return (Number.isInteger(+scoreLine[i])) ?
+                this.MAX_FRAME_SCORE - +scoreLine[i] :
+                this.MAX_FRAME_SCORE
+        }
+        if (scoreLine[i + 1] === 'X')
+            return this.MAX_FRAME_SCORE
         return 0
     }
 
@@ -34,5 +43,12 @@ export class Bowling {
         if (Number.isInteger(+scoreLine[i - 1]))
             return this.MAX_FRAME_SCORE - +scoreLine[i - 1]
         return this.MAX_FRAME_SCORE
+    }
+
+    private computeStrike(scoreLine: string, i: number, score: number) {
+        score += this.maximizeScoreToTen(scoreLine, i)
+        score += this.nextRollScore(scoreLine, i)
+        score += this.nextRollScore(scoreLine, i + 1)
+        return score
     }
 }
