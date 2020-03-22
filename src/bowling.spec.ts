@@ -1,7 +1,8 @@
-import { Bowling } from "./Bowling"
+import { Bowling } from "./bowling"
 
 describe('Bowling kata', () => {
     it.each([
+
         ['--------------------', 0],
         ['1-------------------', 1],
         ['-------------------1', 1],
@@ -33,7 +34,12 @@ describe('Bowling kata', () => {
         ['XX-/XXXXXX--', 210],
         ['XXXXXXXXXXXX', 300],
         ['XXXXXXXXXXX-', 290],
-    ])('should return %i when %s', (rawScore: string, computedScore: number) => {
+        ['--------------------X1-', 11],
+        ['------------------XX1', 21],
+        //['--------------------/1', 11],
+    ])('should return %s when %s', (rawScore: string, computedScore: number) => {
         expect(new Bowling().computeFinalScore(rawScore)).toBe(computedScore)
     })
 })
+
+
