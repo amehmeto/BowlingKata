@@ -4,45 +4,56 @@ export class Bowling {
 
     computeFinalScore(scoreLine: string): number{
         let score: number = 0
-        let i: number = 0
-
         let rollCounter: number = 0
-        while (scoreLine[i]){
-            if (rollCounter < this.LAST_REGULAR_ROLL) {
-                const __ret = this.incrementRegularRoll(scoreLine, i, rollCounter);
-                score += __ret.score;
-                rollCounter = __ret.rollCounter;
-            } else {
-                score += this.incrementBonusRoll(scoreLine, i);
-            }
-            rollCounter++
-            i++
+
+        for (let i = 0 ; scoreLine[i] ; i++){
+            score += this.incrementRoll(rollCounter, scoreLine, i);
+            rollCounter += (this.isRegularRoll(rollCounter) && this.isStrike(scoreLine, i)) ? 2 : 1
         }
         return score
+    }
+
+    private incrementRoll(rollCounter: number, scoreLine: string, i: number) {
+        return (this.isRegularRoll(rollCounter)) ?
+            this.incrementRegularRoll(scoreLine, i) :
+            this.incrementBonusRoll(scoreLine, i)
+    }
+
+    private isRegularRoll(rollCounter: number) {
+        return rollCounter < this.LAST_REGULAR_ROLL;
+    }
+
+    private isStrike(scoreLine: string, i: number) {
+        return scoreLine[i] === 'X';
     }
 
     private incrementBonusRoll(scoreLine: string, i: number) {
         let score = 0
         if (Number.isInteger(+scoreLine[i]))
             score += this.computeRegularScore(scoreLine, i)
-        //if (scoreLine[i] === '/')
-
-        if (scoreLine[i] === 'X')
+        if (this.isSpare(scoreLine, i))
+            score += this.maximizeScoreToTen(scoreLine, i)
+        if (this.isStrike(scoreLine, i))
             score += this.MAX_FRAME_SCORE
         return score;
     }
 
-    private incrementRegularRoll(scoreLine: string, i: number, rollCounter: number) {
+    private isSpare(scoreLine: string, i: number) {
+        return scoreLine[i] === '/';
+    }
+
+    private incrementRegularRoll(
+        scoreLine: string,
+        i: number
+    ) {
         let score = 0
         if (Number.isInteger(+scoreLine[i]))
             score += this.computeRegularScore(scoreLine, i)
-        if (scoreLine[i] === '/')
+        if (this.isSpare(scoreLine, i))
             score += this.computeSpare(scoreLine, i)
-        if (scoreLine[i] === 'X') {
+        if (this.isStrike(scoreLine, i))
             score += this.computeStrike(scoreLine, i)
-            rollCounter++
-        }
-        return {score, rollCounter};
+        return score
     }
 
     private computeRegularScore(scoreLine: string, i: number): number {
@@ -59,12 +70,9 @@ export class Bowling {
     private nextRollScore(scoreLine: string, i: number): number {
         if (Number.isInteger(+scoreLine[i + 1]))
             return +scoreLine[i + 1]
-        if (scoreLine[i + 1] === '/' ){
-            return (Number.isInteger(+scoreLine[i])) ?
-                this.MAX_FRAME_SCORE - +scoreLine[i] :
-                this.MAX_FRAME_SCORE
-        }
-        if (scoreLine[i + 1] === 'X')
+        if (this.isSpare(scoreLine, i + 1))
+            return this.maximizeScoreToTen(scoreLine, i + 1)
+        if (this.isStrike(scoreLine, i + 1))
             return this.MAX_FRAME_SCORE
         return 0
     }
