@@ -7,16 +7,20 @@ export class Bowling {
         let rollCounter: number = 0
 
         for (let i = 0 ; scoreLine[i] ; i++){
-            score += this.incrementRoll(rollCounter, scoreLine, i);
-            rollCounter += (this.isRegularRoll(rollCounter) && this.isStrike(scoreLine, i)) ? 2 : 1
+            score += this.incrementScoreAsPerRoll(rollCounter, scoreLine, i)
+            rollCounter += this.incrementRollCounter(rollCounter, scoreLine, i)
         }
         return score
     }
 
-    private incrementRoll(rollCounter: number, scoreLine: string, i: number) {
+    private incrementRollCounter(rollCounter: number, scoreLine: string, i: number) {
+        return (this.isRegularRoll(rollCounter) && this.isStrike(scoreLine, i)) ? 2 : 1
+    }
+
+    private incrementScoreAsPerRoll(rollCounter: number, scoreLine: string, i: number) {
         return (this.isRegularRoll(rollCounter)) ?
-            this.incrementRegularRoll(scoreLine, i) :
-            this.incrementBonusRoll(scoreLine, i)
+            this.incrementAsRegularRoll(scoreLine, i) :
+            this.incrementAsBonusRoll(scoreLine, i)
     }
 
     private isRegularRoll(rollCounter: number) {
@@ -27,33 +31,28 @@ export class Bowling {
         return scoreLine[i] === 'X';
     }
 
-    private incrementBonusRoll(scoreLine: string, i: number) {
-        let score = 0
+    private incrementAsBonusRoll(scoreLine: string, i: number) {
         if (Number.isInteger(+scoreLine[i]))
-            score += this.computeRegularScore(scoreLine, i)
+            return this.computeRegularScore(scoreLine, i)
         if (this.isSpare(scoreLine, i))
-            score += this.maximizeScoreToTen(scoreLine, i)
+            return this.maximizeScoreToTen(scoreLine, i)
         if (this.isStrike(scoreLine, i))
-            score += this.MAX_FRAME_SCORE
-        return score;
+            return this.MAX_FRAME_SCORE
+        return 0;
     }
 
     private isSpare(scoreLine: string, i: number) {
         return scoreLine[i] === '/';
     }
 
-    private incrementRegularRoll(
-        scoreLine: string,
-        i: number
-    ) {
-        let score = 0
+    private incrementAsRegularRoll(scoreLine: string, i: number) {
         if (Number.isInteger(+scoreLine[i]))
-            score += this.computeRegularScore(scoreLine, i)
+            return this.computeRegularScore(scoreLine, i)
         if (this.isSpare(scoreLine, i))
-            score += this.computeSpare(scoreLine, i)
+            return this.computeSpare(scoreLine, i)
         if (this.isStrike(scoreLine, i))
-            score += this.computeStrike(scoreLine, i)
-        return score
+            return this.computeStrike(scoreLine, i)
+        return 0
     }
 
     private computeRegularScore(scoreLine: string, i: number): number {
