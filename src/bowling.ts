@@ -13,10 +13,6 @@ export class Bowling {
         return score
     }
 
-    private incrementRollCounter(rollCounter: number, scoreLine: string, i: number) {
-        return (this.isRegularRoll(rollCounter) && this.isStrike(scoreLine, i)) ? 2 : 1
-    }
-
     private incrementScoreAsPerRoll(rollCounter: number, scoreLine: string, i: number) {
         return (this.isRegularRoll(rollCounter)) ?
             this.incrementAsRegularRoll(scoreLine, i) :
@@ -27,22 +23,8 @@ export class Bowling {
         return rollCounter < this.LAST_REGULAR_ROLL;
     }
 
-    private isStrike(scoreLine: string, i: number) {
-        return scoreLine[i] === 'X';
-    }
-
-    private incrementAsBonusRoll(scoreLine: string, i: number) {
-        if (Number.isInteger(+scoreLine[i]))
-            return this.computeRegularScore(scoreLine, i)
-        if (this.isSpare(scoreLine, i))
-            return this.maximizeScoreToTen(scoreLine, i)
-        if (this.isStrike(scoreLine, i))
-            return this.MAX_FRAME_SCORE
-        return 0;
-    }
-
-    private isSpare(scoreLine: string, i: number) {
-        return scoreLine[i] === '/';
+    private incrementRollCounter(rollCounter: number, scoreLine: string, i: number) {
+        return (this.isRegularRoll(rollCounter) && this.isStrike(scoreLine, i)) ? 2 : 1
     }
 
     private incrementAsRegularRoll(scoreLine: string, i: number) {
@@ -53,6 +35,16 @@ export class Bowling {
         if (this.isStrike(scoreLine, i))
             return this.computeStrike(scoreLine, i)
         return 0
+    }
+
+    private incrementAsBonusRoll(scoreLine: string, i: number) {
+        if (Number.isInteger(+scoreLine[i]))
+            return this.computeRegularScore(scoreLine, i)
+        if (this.isSpare(scoreLine, i))
+            return this.maximizeScoreToTen(scoreLine, i)
+        if (this.isStrike(scoreLine, i))
+            return this.MAX_FRAME_SCORE
+        return 0;
     }
 
     private computeRegularScore(scoreLine: string, i: number): number {
@@ -88,5 +80,13 @@ export class Bowling {
         score += this.nextRollScore(scoreLine, i)
         score += this.nextRollScore(scoreLine, i + 1)
         return score
+    }
+
+    private isSpare(scoreLine: string, i: number) {
+        return scoreLine[i] === '/';
+    }
+
+    private isStrike(scoreLine: string, i: number) {
+        return scoreLine[i] === 'X';
     }
 }
